@@ -11,7 +11,7 @@ from tkinter import ttk
 from tkinter import filedialog
 from tkinter import messagebox
 
-
+path = 'output.html'
 
 def Makehtml(url):
 
@@ -23,7 +23,7 @@ def Makehtml(url):
     soup = BeautifulSoup(response.content, 'html.parser') # BeautifulSoupの初期化
    
     #title 抽出
-    f = open('output.html', 'w', encoding='UTF-8')
+    f = open(path, 'w', encoding='UTF-8')
     title = soup.find("title")      
     f.write(title.get_text())       #textにしてファイル出力
 
@@ -48,19 +48,22 @@ def Makehtml(url):
 
 
 def UI():
-    # 出力処理
+    # テキスト処理
     def click_export_button():
         url = EditBox.get()
         Makehtml(url)
-        f = open("output.html", encoding="utf-8")
+        f = open(path, encoding="utf-8")
         textBox.delete(0.0,tkinter.END)
         text_data = f.read()
         textBox.insert(END, text_data)
 
     def click_delete_button():
         EditBox.delete(0,tkinter.END)
-
-
+    def click_copy_button():
+        f = open(path, encoding="utf-8")
+        text_data = f.read()
+        root.clipboard_append(text_data)
+    
     # tkinter  
     root = tkinter.Tk()
     root.title("Open2ch scraping")
@@ -94,13 +97,18 @@ def UI():
     export_button = ttk.Button(frame2, text='ファイルの中身を出力', command=click_export_button, width=20)
     export_button.grid(row=0, column=0)
 
+    # コピーボタンの作成
+    copy_button = ttk.Button(frame2, text='全選択コピー', command=click_copy_button, width=20)
+    copy_button.grid(row=1, column=0)
+
+
     # テキスト出力ボックスの作成
     textboxname = StringVar()
     textboxname.set('\n\n出力内容 ')
     label3 = ttk.Label(frame2, textvariable=textboxname)
-    label3.grid(row=1, column=0)
+    label3.grid(row=2, column=0)
     textBox = Text(frame2, width=50)
-    textBox.grid(row=2, column=0)
+    textBox.grid(row=3, column=0)
 
     root.mainloop()
 
